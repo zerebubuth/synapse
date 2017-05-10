@@ -2101,11 +2101,11 @@ class EventsStore(SQLBaseStore):
                 if row["state_group"] not in state_groups_to_delete
             )
 
-        logger.debug("[purge] de-delta-ing remaining state groups %s",
-                     new_state_edges)
         # Now we turn the state groups that reference to-be-deleted state groups
         # to non delta versions.
         for new_state_edge in new_state_edges:
+            logger.debug("[purge] de-delta-ing remaining state group %s",
+                         new_state_edge)
             curr_state = self._get_state_groups_from_groups_txn(
                 txn, [new_state_edge], types=None
             )
@@ -2142,8 +2142,7 @@ class EventsStore(SQLBaseStore):
                 ],
             )
 
-        logger.debug("[purge] removing redundant state groups %s",
-                     state_rows)
+        logger.debug("[purge] removing redundant state groups")
         txn.executemany(
             "DELETE FROM state_groups_state WHERE state_group = ?",
             state_rows
