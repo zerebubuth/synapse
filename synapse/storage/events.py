@@ -270,6 +270,9 @@ class EventsStore(SQLBaseStore):
             Deferred: resolves to (int, int): the stream ordering of ``event``,
             and the stream ordering of the latest persisted event
         """
+        logger.debug("Persisting %s event %s",
+                     "outlier" if event.internal_metadata.is_outlier() else "normal",
+                     event.event_id)
         deferred = self._event_persist_queue.add_to_queue(
             event.room_id, [(event, context)],
             backfilled=backfilled,
