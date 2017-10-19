@@ -240,6 +240,9 @@ class EventsStore(SQLBaseStore):
         partitioned = {}
         for event, ctx in events_and_contexts:
             partitioned.setdefault(event.room_id, []).append((event, ctx))
+            logger.debug("Persisting %s event %s",
+                         "outlier" if event.internal_metadata.is_outlier() else "normal",
+                         event.event_id)
 
         deferreds = []
         for room_id, evs_ctxs in partitioned.iteritems():
